@@ -3,7 +3,7 @@ E-PAC (Experimental Prototype Autonomous Cart), is an autonomous golf cart built
 
 # Finite-State/Flowchart Diagram
 
-![Diagram](Robotics-Logo-Vid.png)
+![Diagram](Flow.png)
 
 ![5472](Robotics-Logo-Vid.png)
 
