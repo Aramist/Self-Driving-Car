@@ -15,15 +15,9 @@ void setup(){
   gas.attach(9);
   brake.attach(10);
   wheel.attach(11);
-  establishContact();
 }
 
-void establishContact(){
-  while(Serial.available<=0){
-    Serial.print('A');
-    delay(300);
-  }
-}
+
 
 void loop(){
   if(Serial.available()>0){
