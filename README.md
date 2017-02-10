@@ -10,7 +10,7 @@ E-PAC (Experimental Prototype Autonomous Cart), is an autonomous golf cart built
 
 Lexis Nexis
 
-Sic Inc.
+Sick Inc.
 
 Lenovo.
 
