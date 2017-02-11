@@ -1,4 +1,4 @@
-import Serial
+import serial
 
 class Control:
 
@@ -7,13 +7,13 @@ class Control:
   
   while True:
   
-    def brake(boolean x):
+    def brake(x):
       ser.write(x)
       
-    def wheel(int y):
+    def wheel(y):
       ser.write(y)
       
-    def gas(int z):
+    def gas(z):
       ser.write(z)
 
     
