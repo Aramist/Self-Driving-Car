@@ -11,9 +11,9 @@ class Control:
       ser.write(x)
       
     def wheel(y):
-      ser.write(y)
+      ser.write("w"+y)
       
     def gas(z):
-      ser.write(z)
+      ser.write("g"+z)
 
     
