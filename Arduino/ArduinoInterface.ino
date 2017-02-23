@@ -1,4 +1,5 @@
 //J.R.
+# include <Arduino.h>
 # include <Servo.h>
 
 Servo gas;
@@ -30,12 +31,14 @@ void loop(){
       brake.write(x); //x is value to be added
     }
     if(Serial.read()[0]=="g"){
-      gasAngle=(int)(Serial.read()[1,strlen()-1]);
+      //gasAngle=(int)(Serial.read()[1,strlen()-1]);
+      gasAngle = (int) Serial.parseInt();
       gas.write(gasAngle);
     }
     if(Serial.read()[0]=="w"){
-      wheelAngle=(int)(Serial.read()[1,strlen()-1]);
-      wheel.write(gasAngle);
+      //wheelAngle=(int)(Serial.read()[1,strlen()-1]);
+      wheelAngle = (int) Serial.parseInt();
+      wheel.write(wheelAngle);
     }
   }
 }
