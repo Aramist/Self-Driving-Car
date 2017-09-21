@@ -3,12 +3,13 @@
 #include <sstream>
 #include <serial.h>
 
-static int SIGNAL_MIN = 5;
-static int SIGNAL_MID = 90;
-static int SIGNAL_MAX = 175;
+static int SIGNAL_MIN = 6;
+static int SIGNAL_MID = 91;
+static int SIGNAL_MAX = 180;
 
-serial::Serial Motor::arduinoSerial = serial::Serial(Motor::port, 115200, serial::Timeout::simpleTimeout(100))
-Motor::Motor(int pwmID){
+
+Motor::Motor(int pwmID, serial::Serial arduinoSerial){
+    Motor::arduinoSerial = arduinoSerial;
     this->motorPwmId = pwmID;
     this->currentSpeed = 0;
 }

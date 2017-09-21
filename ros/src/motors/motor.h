@@ -6,7 +6,6 @@
 
 class Motor{
     private:
-        const static std::string port = "arduino_serial_port" //TODO: set udev rules
         static serial::Serial arduinoSerial;
         int motorPwmId;
         int currentSpeed;
