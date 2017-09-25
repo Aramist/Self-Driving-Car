@@ -34,8 +34,5 @@ void loop(){
 }
 
 void sendData(){
-    Serial.print("A0: ");
     Serial.println(analogRead(A0));
-    Serial.print("A1: ");
-    Serial.println(analogRead(A1));
 }
