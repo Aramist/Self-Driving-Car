@@ -45,7 +45,7 @@ char input[4] = {0, 0, 0, 0};
 int inputIndex = 0;
 
 void doInput(){
-    while(Serial.available > 0){
+    while(Serial.available() > 0){
         //Read from serial input when possible
         input[inputIndex++] = Serial.read();
         if(firstInputReceived == 0) firstInputReceived = millis();
@@ -56,9 +56,9 @@ void doInput(){
     //Check to see if all input has been received
     if(input[0] == INPUT_BEGIN_CHAR && input[3] == INPUT_END_CHAR){
         int a = (int) input[2]; //Convert the data from a char to an int
-        int id = (int) input[1];
+        int id = (int) input[1] - 48;
         double percent = a / 127.0; //Convert it to a percent by dividing by 128
-        motor(id, percent);
+        motors(id, percent);
         //Reset all values to their original state
         inputIndex = 0;
         input[0] = '\x00';
@@ -75,7 +75,7 @@ void doInput(){
         input[1] = '\x00';
         input[2] = '\x00';
         input[3] = '\x00';
-        brake(); //TODO: Activate Brakes
+        //brake(); //TODO: Activate Brakes
     }
 }
 
@@ -87,19 +87,23 @@ void doInput(){
 Servo gasMotor;
 Servo brakeMotor;
 
+//Constant pin numbers
+const int gasPotentiometerPin = A0;
+const int brakePotentiometerPin = A1;
+
 //Constants allowing the use of Servo objects
 const int MIN = 6;
 const int MID = 91;
 const int MAX = 180;
 
 //PD control loop Constants
-const double GAS_P_CONSTANT = 0.1;
-const double GAS_D_CONSTANT = 0.3;
-const double BRAKE_P_CONSTANT = 0.1;
-const double BRAKE_D_CONSTANT = 0.3;
+const double GAS_P_CONSTANT = 0.3;
+const double GAS_D_CONSTANT = 0.6;
+const double BRAKE_P_CONSTANT = 0.3;
+const double BRAKE_D_CONSTANT = 0.6;
 
 //Measured potentiometer constants
-const int gasPotentiometerStartValue = 0;
+const int gasPotentiometerStartValue = 40;
 const int gasPotentiometerStopValue = 400;
 const int brakePotentiometerStartValue = 0;
 const int brakePotentiometerStopValue = 600;
@@ -120,8 +124,13 @@ void motors(int id, double percent){
 }
 
 void updateMotors(){
+    int calcGas = calculateGasPD();
+    int calcBrake = calculateBrakePD();
     gasMotor.write(calculateGasPD());
     brakeMotor.write(calculateBrakePD());
+    Serial.print(calcBrake);
+    Serial.print(" | ");
+    Serial.println(calcGas);
 }
 
 /**
@@ -177,10 +186,10 @@ void setup(){
 
 boolean programHalted = false;
 void loop(){
-    if(millis() - lastInputReceived >= 100){
+    if(millis() - lastInputReceived >= 10000 && firstInputReceived != 0){
         //More than 100ms has passed since the last input. 
-        motor(0, 0); //set the gas to 0
-        motor(1, 0.5); //turn on the brakes
+        motors(0, 0); //set the gas to 0
+        motors(1, 0.5); //turn on the brakes
         programHalted = true;
     }
     if(!programHalted){
