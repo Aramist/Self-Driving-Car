@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(imu)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -116,8 +116,8 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
-  ${catkin_INCLUDE_DIRS}
+  include ${catkin_INCLUDE_DIRS}
+  include "src/navxlib/"
 )
 
 ## Declare a C++ library
@@ -134,6 +134,18 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/imu_node.cpp)
+
+file(GLOB SOURCES
+	"src/navxlib/*.h"
+	"src/navxlib/*.cpp"
+)
+
+add_executable(imu src/navx.cc ${SOURCES})
+
+FIND_PACKAGE (Threads REQUIRED)
+
+target_link_libraries(imu ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(imu ${catkin_LIBRARIES})
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -184,6 +196,8 @@ include_directories(
 #   # myfile2
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
+install(TARGETS imu
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 #############
 ## Testing ##
