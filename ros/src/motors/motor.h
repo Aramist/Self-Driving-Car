@@ -8,12 +8,12 @@ class Motor{
     private:
         static serial::Serial arduinoSerial;
         int motorPwmId;
-        int currentSpeed;
+        int currentSetpoint;
     public:
         Motor(int pwmID);
         ~Motor();
         void set(int speed);
-        int get();
+        int getSetpoint();
 };
 
 #endif //MOTORS_MOTOR_H
