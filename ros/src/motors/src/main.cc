@@ -1,16 +1,15 @@
-#include <serial.h>
 #include "motor.h"
+#include <serial.h>
 #include <ros/ros.h>
-#include <ros/time.h>
 
-//TODO: Rename this package to hardwareinterface
-
-/**Ultrasonic sensor 0: UM30-214111
+/**
+*   Ultrasonic sensor 0: UM30-214111
 *   Range: 0.350m - 3.40m
 *   Switching Frequency: 4Hz
 *   Response Time: 180ms
 *   Output Time: 43 ms
 */
+
 uint32_t ultrasonic0Counter = 0; //A running total of the number of readings taken of this sensor
 const float ultrasonic0FOV; //This sensor's field of view
 const float ultrasonic0MinRange = 0.350; //The minimum range of this ultrasonic sensor in meters
@@ -26,9 +25,9 @@ int main(int argc, char **argv){
     ros::init(argc, argv, "HardwareInterface");
     ros::NodeHandle node;
     ros::Publisher ultrasonicPublisher = node.advertise<sensor_msgs::Range>("ultrasonic_0", 50);
-    
     ros::Rate timer(15);
     while(ros::ok()){
+        ros.spinOnce();
         timer.sleep();
     }
 }
@@ -45,6 +44,4 @@ void readUltrasonic0(uint32_t &counter){
     message.min_range = ultrasonic0MinRange;
     message.max_range = ultrasonic0MaxRange;
     //message.range = 
-    //TODO: read ultrasonic range from serial
-
 }

@@ -12,7 +12,7 @@
 #include "navxlib/AHRS.h"
 
 int main(int argc, char **argv){
-    AHRS navx("/dev/ttyACM0");
+    AHRS navx("/dev/navx");
     usleep(1000 * 1500);
     ros::init(argc, argv, "navx");
     ros::NodeHandle n;
@@ -33,9 +33,12 @@ int main(int argc, char **argv){
         acceleration.x = static_cast<double>(navx.GetWorldLinearAccelX());
         acceleration.y = static_cast<double>(navx.GetWorldLinearAccelY());
         acceleration.z = static_cast<double>(navx.GetWorldLinearAccelZ());
-        rotationRate.x = static_cast<double>(navx.GetRawGyroX());
-        rotationRate.y = static_cast<double>(navx.GetRawGyroY());
-        rotationRate.z = static_cast<double>(navx.GetRawGyroZ());
+        // rotationRate.x = static_cast<double>(navx.GetRawGyroX());
+        // rotationRate.y = static_cast<double>(navx.GetRawGyroY());
+        // rotationRate.z = static_cast<double>(navx.GetRawGyroZ());
+        rotationRate.x = static_cast<double>(navx.GetPitch());
+        rotationRate.y = static_cast<double>(navx.GetRoll());
+        rotationRate.z = static_cast<double>(navx.GetYaw());
         orientation.x = static_cast<double>(navx.GetQuaternionX());
         orientation.y = static_cast<double>(navx.GetQuaternionY());
         orientation.z = static_cast<double>(navx.GetQuaternionZ());

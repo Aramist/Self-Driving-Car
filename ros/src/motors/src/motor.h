@@ -1,18 +1,19 @@
 #ifndef MOTORS_MOTOR_H
 #define MOTORS_MOTOR_H
 
-#include <serial.h>
+#include <serial/serial.h>
+#include <sstream>
 #include <string>
 
 class Motor{
     private:
         static serial::Serial arduinoSerial;
-        int motorPwmId;
+        int motorId;
         int currentSetpoint;
     public:
-        Motor(int pwmID);
+        Motor(int MotorId);
         ~Motor();
-        void set(int speed);
+        void set(int position);
         int getSetpoint();
 };
 
