@@ -1,0 +1,1 @@
+KERNELS=="ttyUSB?", SUBSYSTEMS=="usb-serial", DRIVERS=="ftdi_sio", ATTRS{latency_timer}=="16", SYMLINK+="swiftnav"

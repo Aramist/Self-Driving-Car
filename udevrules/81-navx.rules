@@ -1,0 +1,1 @@
+SUBSYSTEMS=="usb", ATTRS{bcdDevice}=="0200", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="5740", ATTRS{manufacturer}=="STMicroelectronics", SYMLINK+="navx"

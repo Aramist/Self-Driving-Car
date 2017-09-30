@@ -1,0 +1,1 @@
+SUBSYSTEMS=="usb", ATTRS{idProduct}=="0043", ATTRS{manufacturer}=="Arduino Srl            ", ATTRS{serial}=="9533633363535190B122", SYMLINK+="arduino"
