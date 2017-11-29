@@ -7,8 +7,6 @@
 *   Jetson TX1
 */
 
-const boolean DEBUG = 0;
-
 /**
 *   Equivalent to the Arduino Standard Library's map function, but isn't limited to integers
 *   value: the original value, doesn't have to be within the range [fromMin, fromMax)
@@ -27,10 +25,8 @@ double doubleMap(double value, double fromMin, double fromMax, double toMin, dou
 
 /*Input:
 *   All input will be in the following form:
-*   0: A char siginifying the beginning of an input
-*   1: 
-*   2: A char holding data for the input (motor position)
-*   3: A char signifying the end of an input
+*   0: A char siginifying the beginning and type of input (gas vs brake)
+*   1: A char holding data for the input (motor position)
 *   If 100ms has passed since the last input was received,
 *   the brakes will be applied. This makes the assumption
 *   that the connection has been severed or the program has
@@ -39,44 +35,29 @@ double doubleMap(double value, double fromMin, double fromMax, double toMin, dou
 
 unsigned long firstInputReceived = 0; //Timestamp of the first input received. A safety feature
 unsigned long lastInputReceived = 0; //Timestamp of the last input received. A safety feature
-const char INPUT_BEGIN_CHAR = '\x02'; //The character signifying the beginning of an input
-const char INPUT_END_CHAR = '\x04'; //The character signifying the end of an input
-char input[4] = {0, 0, 0, 0};
-int inputIndex = 0;
+const byte GAS_BEGIN_BYTE = 0xFF; //The character signifying gas input
+const byte BRAKE_BEGIN_BYTE = 0xFE; //The character signifying brake input
 
 void doInput(){
-    while(Serial.available() > 0){
-        //Read from serial input when possible
-        input[inputIndex++] = Serial.read();
-        if(firstInputReceived == 0) firstInputReceived = millis();
-        lastInputReceived = millis();
-        if(inputIndex > 3) break;
-    }
-    
-    //Check to see if all input has been received
-    if(input[0] == INPUT_BEGIN_CHAR && input[3] == INPUT_END_CHAR){
-        int a = (int) input[2]; //Convert the data from a char to an int
-        int id = (int) input[1] - 48;
-        double percent = a / 127.0; //Convert it to a percent by dividing by 128
-        motors(id, percent);
-        //Reset all values to their original state
-        inputIndex = 0;
-        input[0] = '\x00';
-        input[1] = '\x00';
-        input[2] = '\x00';
-        input[3] = '\x00';
-    }else if((input[0] == '\x00' || input[4] == '\x00') && inputIndex < 4){
-        //The input is not yet complete
-        return;
-    }else{
-        //The input was either improperly formed or corrupt. panic?
-        inputIndex = 0;
-        input[0] = '\x00';
-        input[1] = '\x00';
-        input[2] = '\x00';
-        input[3] = '\x00';
-        //brake(); //TODO: Activate Brakes
-    }
+	if(Serial.available() < 2)
+		return; //No complete input is available, return here to avoid hanging the program on Serial.read()
+
+	byte firstByte = 0;	//The first byte of this set of input
+	byte secondByte = 0; //The second byte of this set of input
+	Serial.readBytes(&firstByte, 1); //Read from Serial.
+	//Do not read the second byte until it is known that the first byte is OK
+
+	if(firstByte == GAS_BEGIN_BYTE){
+		//The second byte represents a position for the gas actuator
+		Serial.readBytes(&secondByte, 1);
+		motors(0, secondByte / 127.0);
+	}else if(firstByte == BRAKE_BEGIN_BYTE){
+		//The second byte represents a position for the brake actuator
+		Serial.readBytes(&secondByte, 1);
+		motors(1, secondByte / 127.0);
+	}else{
+		//Something broke
+	}
 }
 
 /**Motors:
@@ -91,10 +72,10 @@ Servo brakeMotor;
 const int gasPotentiometerPin = A0;
 const int brakePotentiometerPin = A1;
 
-//Constants allowing the use of Servo objects
-const int MIN = 6;
-const int MID = 91;
-const int MAX = 180;
+//Constants describing the upper, mid, and lower range of speed controller input
+const int MIN = 1000;
+const int MID = 1500;
+const int MAX = 2000;
 
 //PD control loop Constants
 const double GAS_P_CONSTANT = 0.3;
@@ -103,9 +84,10 @@ const double BRAKE_P_CONSTANT = 0.3;
 const double BRAKE_D_CONSTANT = 0.6;
 
 //Measured potentiometer constants
+//These must be manually measured
 const int gasPotentiometerStartValue = 40;
 const int gasPotentiometerStopValue = 400;
-const int brakePotentiometerStartValue = 0;
+const int brakePotentiometerStartValue = 60;
 const int brakePotentiometerStopValue = 600;
 
 //Setpoints
@@ -186,7 +168,7 @@ void setup(){
 
 boolean programHalted = false;
 void loop(){
-    if(millis() - lastInputReceived >= 10000 && firstInputReceived != 0){
+    if(millis() - lastInputReceived >= 100 && firstInputReceived != 0){
         //More than 100ms has passed since the last input. 
         motors(0, 0); //set the gas to 0
         motors(1, 0.5); //turn on the brakes

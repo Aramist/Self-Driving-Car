@@ -2,6 +2,8 @@
 #include <serial.h>
 #include <ros/ros.h>
 
+#include <string>
+
 /**
 *   Ultrasonic sensor 0: UM30-214111
 *   Range: 0.350m - 3.40m
@@ -11,7 +13,7 @@
 */
 
 uint32_t ultrasonic0Counter = 0; //A running total of the number of readings taken of this sensor
-const float ultrasonic0FOV; //This sensor's field of view
+const float ultrasonic0FOV = 0; //This sensor's field of view
 const float ultrasonic0MinRange = 0.350; //The minimum range of this ultrasonic sensor in meters
 const float ultrasonic0MaxRange = 3.500; //The maximum range of this ultrasonic sensor in meters
 const std::string global_frame("0"); //constant string representing the global frame. will be changed later

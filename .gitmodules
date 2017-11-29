@@ -1,0 +1,3 @@
+[submodule "ros/src/swiftnav_ros"]
+	path = ros/src/swiftnav_ros
+	url = https://github.com/swift-nav/swiftnav_ros
