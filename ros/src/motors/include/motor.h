@@ -3,11 +3,10 @@
 
 class Motor{
 public:
-	int position;
-	int identifier;
-	Motor(int id);
-	void sendData() const;
-
+  int position;
+  int identifier;
+  Motor(int id);
+  ~Motor();
+  void sendData() const;
 };
-
 #endif
